@@ -3,16 +3,16 @@ package pl.osmalek.bartek.coroutinesworkshop.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_details.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import pl.osmalek.bartek.coroutinesworkshop.R
 import pl.osmalek.bartek.coroutinesworkshop.data.domain.Film
 import pl.osmalek.bartek.coroutinesworkshop.ui.loading.dispatch
 
-class DetailsActivity : AppCompatActivity() {
+class DetailsActivity : BaseActivity() {
 
     private val film by lazy { intent.getParcelableExtra<Film>(FILM_KEY) }
 
@@ -23,7 +23,6 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_details)
         setSupportActionBar(toolbar)
         supportActionBar?.title = film.title
-        viewModel.fetchCharacters()
         setupCharactersRecyclerView()
         observeLoadingStates()
     }
@@ -41,9 +40,7 @@ class DetailsActivity : AppCompatActivity() {
             adapter = peopleAdapter
         }
 
-        viewModel.characters.observe(::getLifecycle) {
-            peopleAdapter.submitList(it)
-        }
+        launch { peopleAdapter.submitList(viewModel.characters.await()) }
     }
 
     companion object {

@@ -1,15 +1,15 @@
 package pl.osmalek.bartek.coroutinesworkshop.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import pl.osmalek.bartek.coroutinesworkshop.R
 import pl.osmalek.bartek.coroutinesworkshop.data.domain.Film
 import pl.osmalek.bartek.coroutinesworkshop.ui.loading.dispatch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private val viewModel by viewModel<MainViewModel>()
 
@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        viewModel.fetchFilms()
         setupFilmsRecyclerView()
         observeLoadingStates()
     }
@@ -29,9 +28,7 @@ class MainActivity : AppCompatActivity() {
             adapter = filmAdapter
         }
 
-        viewModel.films.observe(::getLifecycle) {
-            filmAdapter.submitList(it)
-        }
+        launch { filmAdapter.submitList(viewModel.films.await()) }
     }
 
     private fun observeLoadingStates() {

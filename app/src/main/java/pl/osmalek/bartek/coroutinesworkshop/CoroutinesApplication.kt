@@ -1,6 +1,7 @@
 package pl.osmalek.bartek.coroutinesworkshop
 
 import android.app.Application
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import org.koin.android.ext.android.startKoin
 import org.koin.androidx.viewmodel.experimental.builder.viewModel
 import org.koin.androidx.viewmodel.ext.koin.viewModel
@@ -33,6 +34,7 @@ private val appModule = module {
         Retrofit.Builder()
             .baseUrl("https://swapi.co/api/")
             .addConverterFactory(MoshiConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .build()
             .create()
     }
